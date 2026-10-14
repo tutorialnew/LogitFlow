@@ -1,0 +1,66 @@
+name: Deploy to GitHub Pages
+
+# Сборка статики и публикация в GitHub Pages по push в main.
+# Сайт доступен по адресу https://tutorialnew.github.io/try/ —
+# поэтому в vite.config.ts задан base = '/try/'. При смене имени репозитория
+# поменяйте BASE_PATH здесь и там.
+
+on:
+  push:
+    branches: [main]
+  # Позволяет вручную пересобрать сайт из вкладки Actions.
+  workflow_dispatch:
+
+# Разрешения нужны самому экшену pages, а не всему токену репозитория.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Не запускать новый деплой, пока предыдущий не закончился.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Сборка и тесты
+    runs-on: ubuntu-latest
+    steps:
+      - name: Копирование репозитория
+        uses: actions/checkout@v4
+
+      - name: Установка Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Установка зависимостей
+        run: npm ci
+
+      - name: Тесты математического ядра
+        run: npm run test
+
+      - name: Проверка типов и сборка
+        run: npm run build
+
+      - name: Настройка страниц
+        uses: actions/configure-pages@v5
+
+      - name: Загрузка артефакта сборки
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Публикация
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Публикация в GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

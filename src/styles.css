@@ -1,0 +1,164 @@
+@import 'tailwindcss';
+
+@theme {
+  /* База: глубокий сине-стальной, не «почти чёрный» — панели читаются как слои. */
+  --color-ink-950: #070c15;
+  --color-ink-900: #0b121e;
+  --color-ink-800: #101a2b;
+  --color-ink-700: #16233a;
+  --color-ink-600: #1d2d48;
+
+  --color-line: #22314b;
+  --color-line-strong: #35496e;
+
+  --color-sand-100: #e9eef8;
+  --color-sand-300: #b3c0d6;
+  --color-sand-500: #8595b0;
+  --color-sand-700: #5b6b88;
+
+  /* Латунь: единственный «брендовый» цвет, только интерактив и активные состояния. */
+  --color-brass-300: #f0d27a;
+  --color-brass-400: #ddb44a;
+  --color-brass-500: #c39a2c;
+
+  /* Монотонная шкала риска: изумруд → багр. Девять ступеней = девять грейдов. */
+  --color-risk-1: #34d399;
+  --color-risk-2: #4ade80;
+  --color-risk-3: #a3e635;
+  --color-risk-4: #facc15;
+  --color-risk-5: #f59e0b;
+  --color-risk-6: #fb923c;
+  --color-risk-7: #f87171;
+  --color-risk-8: #ef4444;
+  --color-risk-9: #be123c;
+
+  --font-sans: 'Golos Text', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  --radius-panel: 3px;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: none;
+  }
+
+  @media (pointer: fine) {
+    html {
+      overscroll-behavior: none;
+    }
+  }
+
+  body {
+    background-color: var(--color-ink-900);
+    color: var(--color-sand-100);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    /* Мелкая сетка как «бумага» реестра — едва различимая, держит плоскость. */
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.016) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.016) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+
+  /* Числа в дашборде всегда моноширинные по ширине — столбцы не «прыгают». */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass-400);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Ползунок: трек — линия, ручка — латунный маркер. Никаких «шариков из шаблона». */
+  input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 26px;
+    background: transparent;
+    cursor: ew-resize;
+  }
+
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--color-line-strong);
+  }
+
+  input[type='range']::-moz-range-track {
+    height: 2px;
+    background: var(--color-line-strong);
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    margin-top: -6px;
+    border-radius: 2px;
+    background: var(--color-brass-400);
+    border: 1px solid var(--color-ink-950);
+    transition: background-color 120ms ease, transform 120ms ease;
+  }
+
+  input[type='range']::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--color-brass-400);
+    border: 1px solid var(--color-ink-950);
+    transition: background-color 120ms ease, transform 120ms ease;
+  }
+
+  input[type='range']:hover::-webkit-slider-thumb,
+  input[type='range']:focus-visible::-webkit-slider-thumb {
+    background: var(--color-brass-300);
+    transform: scale(1.12);
+  }
+
+  input[type='range']:hover::-moz-range-thumb,
+  input[type='range']:focus-visible::-moz-range-thumb {
+    background: var(--color-brass-300);
+    transform: scale(1.12);
+  }
+
+  /* Нативный select в тёмной теме Windows требует явных цветов. */
+  select {
+    background-color: var(--color-ink-700);
+    color: var(--color-sand-100);
+  }
+
+  ::selection {
+    background: rgb(195 154 44 / 0.32);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
