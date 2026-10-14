@@ -1,19 +1,20 @@
-{
+{"$schema": "https://opencode.ai/config.json",
+  "mcp": {
     "filesystem": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "путь к проекту сюда"],
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\Tutorial_new\\Desktop\\try"],
       "enabled": true
     },
     "git": {
       "type": "local",
-      "command": ["uvx", "mcp-server-git", "--repository", "путь к папке сюда"],
+      "command": ["uvx", "mcp-server-git", "--repository", "C:\\Users\\Tutorial_new\\Desktop\\try"],
       "enabled": true
     },
     "github": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
       "environment": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "токен сюда"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "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"
       },
       "enabled": true
     },
