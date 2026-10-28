@@ -10,6 +10,11 @@ import { BorrowerPanel } from '@/ui/BorrowerPanel'
 import { TermsPanel } from '@/ui/TermsPanel'
 import { VerdictPanel } from '@/ui/VerdictPanel'
 import { BlockFallback } from '@/ui/BlockFallback'
+import { PlansPanel } from '@/ui/PlansPanel'
+import { FeedbackPanel } from '@/ui/FeedbackPanel'
+import { ContentMapPanel } from '@/ui/ContentMapPanel'
+import { planLimits, readPlan, writePlan } from '@/ui/plans'
+import type { PlanId } from '@/ui/plans'
 import type { PortfolioState } from '@/ui/PortfolioPanel'
 import {
   ContributionsPanel,
@@ -38,6 +43,9 @@ export default function App() {
   const [portfolio, setPortfolio] = useState<PortfolioState>(INITIAL_PORTFOLIO)
   const [presetId, setPresetId] = useState<string | null>(COMPANY_PRESETS[0]!.id)
 
+  /** Подписка — единственное продуктовое состояние, живущее между сессиями. */
+  const [plan, setPlan] = useState<PlanId>(() => readPlan())
+
   const patchBorrower = useCallback((patch: Partial<BorrowerProfile>) => {
     setBorrower((prev) => ({ ...prev, ...patch }))
   }, [])
@@ -48,6 +56,14 @@ export default function App() {
 
   const patchPortfolio = useCallback((patch: Partial<PortfolioState>) => {
     setPortfolio((prev) => ({ ...prev, ...patch }))
+  }, [])
+
+  /** Смена тарифа сразу сжимает портфель до нового лимита — без фантомных займов. */
+  const applyPlan = useCallback((next: PlanId) => {
+    writePlan(next)
+    const limits = planLimits(next)
+    setPortfolio((prev) => ({ ...prev, loans: Math.min(prev.loans, limits.maxLoans) }))
+    setPlan(next)
   }, [])
 
   /**
@@ -71,22 +87,27 @@ export default function App() {
     patchBorrower(patch)
   }, [patchBorrower])
 
+  /** Добавление текущей компании подчиняется лимиту тарифа. */
   const addCurrent = useCallback(() => {
-    setPortfolio((prev) => ({
-      ...prev,
-      mode: 'manual',
-      entries: [...prev.entries, { ...borrower, name: borrower.name || `Заёмщик ${prev.entries.length + 1}` }],
-    }))
-  }, [borrower])
+    const limits = planLimits(plan)
+    setPortfolio((prev) => {
+      if (prev.entries.length >= limits.maxLoans) return prev
+      return {
+        ...prev,
+        mode: 'manual',
+        entries: [...prev.entries, { ...borrower, name: borrower.name || `Заёмщик ${prev.entries.length + 1}` }],
+      }
+    })
+  }, [borrower, plan])
 
   const removeAt = useCallback((index: number) => {
     setPortfolio((prev) => ({ ...prev, entries: prev.entries.filter((_, i) => i !== index) }))
   }, [])
 
   return (
-    <AppShell result={result}>
+    <AppShell result={result} plan={plan}>
       <div className="space-y-8">
-        <Hero result={result} activePresetId={presetId} onApplyPreset={applyPreset} />
+        <Hero result={result} activePresetId={presetId} plan={plan} onApplyPreset={applyPreset} />
 
         <BorrowerPanel borrower={borrower} onChange={onManualChange} />
 
@@ -99,7 +120,7 @@ export default function App() {
           <TermsPanel terms={terms} onChange={patchTerms} />
         </Panel>
 
-        <VerdictPanel result={result} />
+        <VerdictPanel result={result} plan={plan} />
 
         <Panel
           id="scoring"
@@ -130,8 +151,22 @@ export default function App() {
             onAddCurrent={addCurrent}
             onRemoveAt={removeAt}
             result={result}
+            plan={plan}
           />
         </Suspense>
+
+        <PlansPanel plan={plan} onChangePlan={applyPlan} />
+
+        <FeedbackPanel plan={plan} result={result} />
+
+        <Panel
+          id="map"
+          tone="var(--color-sand-700)"
+          title="Карта разделов"
+          description="Индекс всех блоков страницы: что где находится и зачем нужен. Продублирован в навигации слева — только активные разделы."
+        >
+          <ContentMapPanel />
+        </Panel>
 
         <Suspense fallback={<BlockFallback minHeight={300} label="Загружается математическая справка" />}>
           <MathReference />

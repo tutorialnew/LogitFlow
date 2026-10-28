@@ -19,6 +19,10 @@ import { TONE_COLOR, percent, signedPercent } from '@/format'
 import { Panel } from './Panel'
 import { Segmented, Stat } from './Controls'
 import { SliderField } from './SliderField'
+import { Button } from './Button'
+import { Lock } from 'lucide-react'
+import type { PlanId } from './plans'
+import { planLimits } from './plans'
 
 export interface PortfolioState {
   loans: number
@@ -34,6 +38,7 @@ interface PortfolioPanelProps {
   onAddCurrent: () => void
   onRemoveAt: (index: number) => void
   result: AssessmentResult
+  plan: PlanId
 }
 
 export const PortfolioPanel = memo(function PortfolioPanel({
@@ -42,10 +47,15 @@ export const PortfolioPanel = memo(function PortfolioPanel({
   onAddCurrent,
   onRemoveAt,
   result,
+  plan,
 }: PortfolioPanelProps) {
   const portfolio = result.portfolio
   const active = portfolio?.active
   const tone = TONE_COLOR[result.gradeTone]
+  const limits = planLimits(plan)
+  const fieldCap = FIELD_LIMITS.portfolioLoans.max
+  const gated = limits.maxLoans < fieldCap
+  const canAddEntry = state.entries.length < limits.maxLoans
 
   const distribution = (active?.distribution ?? [])
     .filter((bin) => bin.probability > 1e-5)
@@ -86,12 +96,16 @@ export const PortfolioPanel = memo(function PortfolioPanel({
             <SliderField
               name="portfolio-loans"
               label="Число займов в портфеле"
-              hint="Разбивка капитала на большее число займов — главный способ снизить риск потери всего портфеля."
-              value={state.loans}
+              hint={
+                gated
+                  ? `Бесплатный тариф: до ${limits.maxLoans} займов. С подпиской доступно ${fieldCap}.`
+                  : 'Разбивка капитала на большее число займов — главный способ снизить риск потери всего портфеля.'
+              }
+              value={Math.min(state.loans, limits.maxLoans)}
               min={FIELD_LIMITS.portfolioLoans.min}
-              max={FIELD_LIMITS.portfolioLoans.max}
+              max={limits.maxLoans}
               step={1}
-              display={`${state.loans} ${state.loans === 1 ? 'заём' : 'займов'}`}
+              display={`${Math.min(state.loans, limits.maxLoans)} ${state.loans === 1 ? 'заём' : 'займов'}`}
               tone="var(--color-sand-300)"
               onChange={(loans) => onChange({ loans })}
             />
@@ -110,23 +124,44 @@ export const PortfolioPanel = memo(function PortfolioPanel({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
+            <Button
+              variant="primary"
+              size="md"
               onClick={onAddCurrent}
-              className="inline-flex items-center gap-2 border border-brass-400 bg-ink-700 px-3 py-2 text-sm text-brass-300 transition-colors hover:bg-brass-400 hover:text-ink-950"
+              disabled={!canAddEntry}
+              title={!canAddEntry ? `Достигнут лимит ${limits.maxLoans} займов` : undefined}
             >
               <Plus aria-hidden="true" className="size-4" />
               Добавить компанию в портфель
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
               onClick={() => onChange({ seed: (state.seed * 16807 + 11) % 2147483647 })}
-              className="inline-flex items-center gap-2 border border-line bg-ink-700 px-3 py-2 text-sm text-sand-300 transition-colors hover:border-line-strong hover:text-sand-100"
             >
               <Shuffle aria-hidden="true" className="size-4" />
               Другая подборка
-            </button>
+            </Button>
           </div>
+
+          {gated ? (
+            <div className="border border-dashed border-brass-400/45 px-3 py-3">
+              <div className="flex items-center gap-2 text-xs font-medium text-brass-300">
+                <Lock aria-hidden="true" className="size-3.5" />
+                Бесплатный тариф · до {limits.maxLoans} займов
+              </div>
+              <p className="mt-1.5 max-w-[46ch] text-xs leading-relaxed text-sand-500">
+                Портфель в {fieldCap} займов, VaR и CVaR на широких подборках без ограничений
+                и копирование отчёта — в подписке «Инвестор».
+              </p>
+              <a
+                href="#plans"
+                className="mt-2 inline-flex text-xs font-medium text-brass-300 underline-offset-2 transition-colors hover:underline"
+              >
+                Сравнить тарифы →
+              </a>
+            </div>
+          ) : null}
 
           {manualMode ? (
             <div className="border border-line bg-ink-700/40 px-3 py-3">
@@ -309,14 +344,10 @@ function EmptyPortfolioState({ onAddCurrent }: { onAddCurrent: () => void }) {
         Добавьте текущую компанию и переключите её параметры — или добавьте компании из
         разных отраслей вручную.
       </p>
-      <button
-        type="button"
-        onClick={onAddCurrent}
-        className="mt-4 inline-flex items-center gap-2 border border-brass-400 bg-ink-700 px-3 py-2 text-sm text-brass-300 transition-colors hover:bg-brass-400 hover:text-ink-950"
-      >
+      <Button variant="primary" size="md" onClick={onAddCurrent}>
         <Plus aria-hidden="true" className="size-4" />
         Добавить компанию в портфель
-      </button>
+      </Button>
     </div>
   )
 }

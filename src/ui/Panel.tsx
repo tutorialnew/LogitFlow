@@ -1,12 +1,14 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 interface PanelProps {
   id?: string
-  /** Оттенок цветового рельса слева. Кодирует риск блока, а не декорирует. */
+  /** Оттенок цветовой рейки слева. Кодирует риск блока, а не декорирует. */
   tone?: string | null
   title: string
   description?: string
   actions?: ReactNode
+  /** Дополнительная фоновая заливка содержимого (CSS-свойства поверх цвета панели). */
+  wash?: CSSProperties
   children: ReactNode
 }
 
@@ -14,13 +16,13 @@ interface PanelProps {
  * Панель-«лист реестра»: волосяная рамка, цветной рельс слева, сплющенные углы.
  * Один визуальный язык для всех блоков — вместо набора одинаковых скруглённых карточек.
  */
-export function Panel({ id, tone, title, description, actions, children }: PanelProps) {
+export function Panel({ id, tone, title, description, actions, wash, children }: PanelProps) {
   return (
     <section
       id={id}
       aria-labelledby={id ? `${id}-title` : undefined}
       className="relative scroll-mt-24 border border-line bg-ink-800"
-      style={{ borderLeftWidth: 3, borderLeftColor: tone ?? 'var(--color-line)' }}
+      style={{ borderLeftWidth: 3, borderLeftColor: tone ?? 'var(--color-line)', ...wash }}
     >
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-4 sm:px-6">
         <div className="min-w-0">

@@ -58,11 +58,6 @@
     font-synthesis-weight: none;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
-    /* Мелкая сетка как «бумага» реестра — едва различимая, держит плоскость. */
-    background-image:
-      linear-gradient(to right, rgb(255 255 255 / 0.016) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.016) 1px, transparent 1px);
-    background-size: 64px 64px;
   }
 
   h1,
