@@ -102,7 +102,7 @@ src/
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173/try/
+npm run dev        # http://localhost:5173/LogitFlow/
 npm run test       # 40 тестов математического ядра
 npm run build      # типизация + продакшен-сборка в dist/
 npm run preview    # предпросмотр собранного сайта
@@ -112,7 +112,7 @@ npm run preview    # предпросмотр собранного сайта
 
 Пуш в `main` запускает [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
 установка зависимостей → тесты → сборка → публикация в GitHub Pages.
-Сайт будет доступен по адресу `https://tutorialnew.github.io/try/`.
+Сайт доступен по адресу `https://tutorialnew.github.io/LogitFlow/`.
 
 В первый раз в репозитории нужно включить Pages: **Settings → Pages → Source: GitHub Actions**.
 

@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 // BASE_PATH: имя репозитория. GitHub Pages отдаёт проект по адресу
 // https://<user>.github.io/<repo>/ — это нужно учесть в base, иначе
 // ассеты не найдутся. Меняется одной строкой при переименовании репозитория.
-export const BASE_PATH = '/try/'
+export const BASE_PATH = '/LogitFlow/'
 
 export default defineConfig({
   base: BASE_PATH,
