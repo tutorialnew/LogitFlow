@@ -1,4 +1,4 @@
-/** Навигация: единый источник для бокового меню. */
+/** Карта контента: единый источник и для навигации, и для раздела «Карта разделов». */
 
 export interface ContentEntry {
   id: string
@@ -69,6 +69,13 @@ export const CONTENT_MAP: ContentEntry[] = [
     inNav: true,
   },
   {
+    id: 'map',
+    label: 'Карта разделов',
+    kind: 'docs',
+    description: 'Индекс всех блоков страницы: что где находится и зачем нужен.',
+    inNav: false,
+  },
+  {
     id: 'math',
     label: 'Математическая справка',
     kind: 'docs',
@@ -76,3 +83,17 @@ export const CONTENT_MAP: ContentEntry[] = [
     inNav: true,
   },
 ]
+
+const KIND_LABEL: Record<ContentEntry['kind'], string> = {
+  expert: 'Экспертные блоки · работать с расчётом',
+  pay: 'Доступ и подписка',
+  docs: 'Документация · модель и формулы',
+}
+
+export function groupByKind(entries: ContentEntry[]): Array<{ kind: ContentEntry['kind']; title: string; rows: ContentEntry[] }> {
+  const order: ContentEntry['kind'][] = ['expert', 'docs', 'pay']
+  return order.flatMap((kind) => {
+    const rows = entries.filter((entry) => entry.kind === kind)
+    return rows.length === 0 ? [] : [{ kind, title: KIND_LABEL[kind], rows }]
+  })
+}

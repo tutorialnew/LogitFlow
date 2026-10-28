@@ -1,8 +1,8 @@
 name: Deploy to GitHub Pages
 
 # Сборка статики и публикация в GitHub Pages по push в main.
-# Сайт доступен по адресу https://tutorialnew.github.io/try/ —
-# поэтому в vite.config.ts задан base = '/try/'. При смене имени репозитория
+# Сайт доступен по адресу https://tutorialnew.github.io/LogitFlow/ —
+# поэтому в vite.config.ts задан base = '/LogitFlow/'. При смене имени репозитория
 # поменяйте BASE_PATH здесь и там.
 
 on:
