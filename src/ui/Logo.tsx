@@ -7,9 +7,9 @@ interface LogoProps {
 }
 
 /**
- * Знак: фрагмент шкалы риска. Не абстрактная «искра» — то же изображение, что и
- * в герое приложения: заёмщик находится в точке на ленте от изумрудного до багрового.
- * В 16 пикселях читается как крошечный индикатор, в 30 — как знак.
+ * Знак: сигмоида — тонкая плавная дуга логистической функции, вылетающая вверх
+ * стрелкой. Это буквально модель, на которой стоит продукт: S-кривая вероятности
+ * дефолта, и она означает «решение найдено и направлено вверх».
  */
 export function Logo({ size = 30, withName = false, className = '' }: LogoProps) {
   return (
@@ -17,27 +17,30 @@ export function Logo({ size = 30, withName = false, className = '' }: LogoProps)
       <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" className="shrink-0">
         <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="7" fill="none" stroke="currentColor" strokeOpacity="0.3" strokeWidth="1.5" />
 
-        {/* Лента риска: изумруд → янтарь → багр */}
-        <rect x="6" y="17" width="7" height="4" rx="1" fill="#34d399" />
-        <rect x="13.4" y="17" width="7" height="4" rx="1" fill="#f59e0b" />
-        <rect x="20.8" y="17" width="5.2" height="4" rx="1" fill="#be123c" />
+        {/* Тихие оси прибора */}
+        <line x1="7" y1="26" x2="26" y2="26" stroke="currentColor" strokeOpacity="0.22" strokeWidth="1" />
+        <line x1="7" y1="26" x2="7" y2="7" stroke="currentColor" strokeOpacity="0.22" strokeWidth="1" />
 
-        {/* Маркер оценки: латунная засечка над лентой */}
-        <rect x="16.4" y="7" width="1.2" height="6" rx="0.6" fill="#ddb44a" />
-        <path d="M17 15.6 L14.8 13.2 H19.2 Z" fill="#ddb44a" />
+        {/* Сигмоида: медленный старт, подъём, плато */}
+        <path
+          d="M6.5 23 C 13 23, 13.5 11, 20 11 C 22.6 11, 24.5 10.2, 24.5 8"
+          fill="none"
+          stroke="#ddb44a"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        {/* Стрелка вверх: конец кривой */}
+        <path d="M24.5 4.2 L22 8.4 L27 8.4 Z" fill="#ddb44a" />
       </svg>
 
       {withName ? (
-        <span className="flex flex-col leading-tight">
-          <span className="text-[15px] font-bold tracking-tight text-sand-100">ЗаёмСкан</span>
-          <span className="text-[10px] leading-tight text-sand-700">проверка заёмщика</span>
-        </span>
+        <span className="text-[15px] font-bold tracking-tight text-sand-100">LogitFlow</span>
       ) : null}
     </span>
   )
 }
 
-export const BRAND_NAME = 'ЗаёмСкан'
-export const BRAND_TAGLINE = 'Проверка заёмщика за 60 секунд'
-export const BRAND_DOMAINS = ['zaemscan.ru', 'zaem-scan.ru', 'zaemscan.app']
-export const BRAND_EMAIL = 'hello@zaemscan.ru'
+export const BRAND_NAME = 'LogitFlow'
+export const BRAND_DOMAINS = ['logitflow.ru', 'logitflow.app', 'logitflow.io']
+export const BRAND_EMAIL = 'hello@logitflow.ru'

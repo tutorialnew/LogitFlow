@@ -58,7 +58,7 @@ export const PLANS: Plan[] = [
   {
     id: 'platform',
     title: 'Платформа',
-    price: '9 900 ₽',
+    price: '900 ₽',
     period: 'в месяц',
     note: 'Для кредитных платформ и финансовых консультантов.',
     highlights: [
@@ -72,7 +72,7 @@ export const PLANS: Plan[] = [
   },
 ]
 
-export const PLAN_STORAGE_KEY = 'zaemscan.plan.v1'
+export const PLAN_STORAGE_KEY = 'logitflow.plan.v1'
 
 export const PLAN_IDS = PLANS.map((plan) => plan.id)
 

@@ -45,7 +45,7 @@ export function FeedbackPanel({ plan, result }: FeedbackPanelProps) {
 
   const summary = composeSummary(topic, usage, email, words, result)
   const mailtoHref = `mailto:${BRAND_EMAIL}?subject=${encodeURIComponent(
-    `ЗаёмСкан — ${topic}`,
+    `LogitFlow — ${topic}`,
   )}&body=${encodeURIComponent(summary)}`
 
   const offerPlan = PLANS.find((item) => item.id === 'investor')!
@@ -240,7 +240,7 @@ function composeSummary(
   result: AssessmentResult,
 ): string {
   return [
-    `ЗаёмСкан · отзыв · ${topic}`,
+    `LogitFlow · отзыв · ${topic}`,
     `Доступ: ${planById(usage).title}`,
     `Заёмщик в расчёте: ${result.borrower.name} (${result.borrower.industry}), PD ${percent(result.pd, 2)}, грейд ${result.grade}.`,
     email ? `Почта: ${email}` : 'Почта: не указана',

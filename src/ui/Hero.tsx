@@ -2,7 +2,6 @@ import { ArrowRight, FileBarChart, Play } from 'lucide-react'
 import { COMPANY_PRESETS } from '@/domain/presets'
 import type { CompanyPreset } from '@/domain/presets'
 import type { AssessmentResult } from '@/domain/types'
-import { BRAND_NAME, BRAND_TAGLINE, Logo } from './Logo'
 import { TONE_COLOR, percent } from '@/format'
 import { heroBand } from './backgrounds'
 import { Button } from './Button'
@@ -34,14 +33,6 @@ export function Hero({ result, activePresetId, plan, onApplyPreset }: HeroProps)
       />
 
       <div className="relative">
-        <div className="flex flex-wrap items-center gap-3">
-          <Logo withName />
-          <span className="hidden h-8 w-px bg-line sm:block" aria-hidden="true" />
-          <p className="text-xs text-sand-500">
-            {BRAND_NAME} · {BRAND_TAGLINE}
-          </p>
-        </div>
-
         <div className="mt-8 max-w-[68ch]">
           <h1 className="text-3xl font-semibold leading-[1.15] text-sand-100 sm:text-[2.6rem]">
             Стоит ли инвестору вкладываться в этот заём

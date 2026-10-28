@@ -202,7 +202,7 @@ function FactorNote({
 /** Текстовый отчёт по заёмщику: то, что копирует инвестор в свою заметку о сделке. */
 function buildReport(result: AssessmentResult): string {
   const lines = [
-    'ЗаёмСкан · отчёт по заёмщику',
+    'LogitFlow · отчёт по заёмщику',
     `Компания: ${result.borrower.name} (${result.borrower.industry})`,
     `PD за 12 мес.: ${percent(result.pd, 2)} · грейд ${result.grade} (${result.gradeLabel.toLowerCase()})`,
     `Z = ${result.logit.toFixed(3)}`,

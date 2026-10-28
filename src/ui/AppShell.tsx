@@ -59,7 +59,7 @@ export function AppShell({ result, plan, children }: AppShellProps) {
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <div className="mx-auto flex max-w-[1440px] items-center gap-4 px-4 py-3 sm:px-6">
-          <a href="#hero" className="shrink-0" aria-label={`${'ЗаёмСкан'} — к началу страницы`}>
+          <a href="#hero" className="shrink-0" aria-label="LogitFlow — к началу страницы">
             <Logo withName />
           </a>
           <div className="hidden min-w-0 flex-1 lg:block">
