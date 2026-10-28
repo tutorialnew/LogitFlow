@@ -17,29 +17,58 @@ interface AppShellProps {
 
 /**
  * Каркас страницы: липкая навигация с подсветкой активного раздела и индикатором риска.
- * Наблюдение за скроллом — единственный источник активного пункта, без IntersectionObserver
- * на каждый блок.
+ * Активный пункт считается напрямую из позиции скролла: активен тот раздел,
+ * чья шапка последней пересекла «линию чтения» на трети экрана. Такой расчёт не
+ * зависит от толщины полосы наблюдения и при любом прыжке по якорю выдаёт ровно
+ * один верный пункт — в отличие от IntersectionObserver, который молчит, когда
+ * панель проскальзывает мимо узкой зоны.
  */
 export function AppShell({ result, plan, children }: AppShellProps) {
   const [active, setActive] = useState<string>(NAV_SECTIONS[0]!.id)
 
   useEffect(() => {
-    const targets = NAV_SECTIONS.map((section) => document.getElementById(section.id)).filter(
-      (element): element is HTMLElement => element !== null,
-    )
+    /** Расстояние до конца страницы, из-за которого «низ» — это последний раздел. */
+    const BOTTOM_EPSILON = 4
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]
-        if (visible) setActive(visible.target.id)
-      },
-      { rootMargin: '-25% 0px -60% 0px', threshold: 0 },
-    )
+    const compute = () => {
+      const readingLine = window.innerHeight * 0.35
+      const doc = document.documentElement
+      const isAtBottom =
+        window.innerHeight + window.scrollY >= doc.scrollHeight - BOTTOM_EPSILON
 
-    for (const target of targets) observer.observe(target)
-    return () => observer.disconnect()
+      let current = NAV_SECTIONS[0]!.id
+      for (const section of NAV_SECTIONS) {
+        const element = document.getElementById(section.id)
+        if (element && element.getBoundingClientRect().top <= readingLine) {
+          current = section.id
+        }
+      }
+
+      // Доскроллил до конца страницы — активен последний раздел, пусть он и
+      // не дотянулся до линии чтения.
+      const last = NAV_SECTIONS[NAV_SECTIONS.length - 1]!
+      if (isAtBottom && document.getElementById(last.id)) {
+        current = last.id
+      }
+
+      setActive(current)
+    }
+
+    /** Якорный переход сам скроллит страницу — достаточно события scroll. */
+    let frame = 0
+    const onScroll = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(compute)
+    }
+
+    compute()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      cancelAnimationFrame(frame)
+    }
   }, [])
 
   const tone = TONE_COLOR[result.gradeTone]
