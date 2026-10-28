@@ -12,7 +12,6 @@ import { VerdictPanel } from '@/ui/VerdictPanel'
 import { BlockFallback } from '@/ui/BlockFallback'
 import { PlansPanel } from '@/ui/PlansPanel'
 import { FeedbackPanel } from '@/ui/FeedbackPanel'
-import { ContentMapPanel } from '@/ui/ContentMapPanel'
 import { planLimits, readPlan, writePlan } from '@/ui/plans'
 import type { PlanId } from '@/ui/plans'
 import type { PortfolioState } from '@/ui/PortfolioPanel'
@@ -158,15 +157,6 @@ export default function App() {
         <PlansPanel plan={plan} onChangePlan={applyPlan} />
 
         <FeedbackPanel plan={plan} result={result} />
-
-        <Panel
-          id="map"
-          tone="var(--color-sand-700)"
-          title="Карта разделов"
-          description="Индекс всех блоков страницы: что где находится и зачем нужен. Продублирован в навигации слева — только активные разделы."
-        >
-          <ContentMapPanel />
-        </Panel>
 
         <Suspense fallback={<BlockFallback minHeight={300} label="Загружается математическая справка" />}>
           <MathReference />
